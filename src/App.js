@@ -11,7 +11,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/" component={Home} exact />
-          <Route path="/mint" component={Mint} />          
+          <Route path="/mint" component={Mint} />
         </Switch>
       </Router>
     </ContextProvider>
@@ -19,3 +19,4 @@ function App() {
 }
 
 export default App;
+v
