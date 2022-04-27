@@ -1,4 +1,7 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from 'react';
+import { ethers } from 'ethers';
+import Web3Modal from 'web3modal';
+
 import {
   MintWrap,
   Container,
@@ -12,48 +15,47 @@ import {
   FooterContainer,
   Incrementor,
   IncrementWrap,
-} from "./MintElements";
-import ScrollToTop from "../ScrollToTop";
-import Video from "../../videos/video.mp4";
-import { ethers } from "ethers";
-import mintNFT from "./mintTransaction";
-import { useContext } from "react";
-import { ConnectionContext } from "../../ConnectionContext";
+} from './MintElements';
 
-const Mint = () => {
-  const [hover, setHover] = useState(false);
+import Video from '../../videos/video.mp4';
+import mintNFT from './mintTransaction';
+import { ConnectionContext } from '../../ConnectionContext';
+import providerOptions from '../../providerOptions';
+
+function Mint() {
   const [mintAmount, setMintAmount] = useState(1);
   const { account, setAccount } = useContext(ConnectionContext);
-  let walletAddress = account;
+  const [provider, setProvider] = useState();
+  const [library, setLibrary] = useState();
+  const [globalError, setGlobalError] = useState('');
 
-  const onHover = () => {
-    setHover(!hover);
-  };
-
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-
-      await provider.send("eth_requestAccounts", []);
-
-      const signer = provider.getSigner();
-
-      let address = await signer.getAddress();
-
-      setAccount(address);
+  async function connectWallet() {
+    const web3Modal = new Web3Modal({
+      network: 'rinkeby',
+      theme: 'light',
+      cacheProvider: true,
+      disableInjectedProvider: false,
+      providerOptions,
+    });
+    try {
+      const providerNew = await web3Modal.connect();
+      const libraryNew = new ethers.providers.Web3Provider(provider);
+      const accounts = await library.listAccounts();
+      setProvider(providerNew);
+      setLibrary(libraryNew);
+      if (accounts) setAccount(accounts[0]);
+    } catch (error) {
+      setGlobalError(error);
     }
-  };
+  }
 
-  const incrementMintAmount = () => {
+  function incrementMintAmount() {
     let newMintAmount = mintAmount + 1;
     if (newMintAmount > 10) {
       newMintAmount = 10;
     }
     setMintAmount(newMintAmount);
-  };
+  }
 
   const decrementMintAmount = () => {
     let newMintAmount = mintAmount - 1;
@@ -65,7 +67,6 @@ const Mint = () => {
 
   return (
     <>
-      <ScrollToTop />
       <Container>
         <HeroContainer>
           <MintBg>
@@ -79,7 +80,7 @@ const Mint = () => {
               <Text>{account}</Text>
               <IncrementWrap>
                 <Incrementor
-                  onClick={(e) => {
+                  onClick={() => {
                     decrementMintAmount();
                   }}
                 >
@@ -88,7 +89,7 @@ const Mint = () => {
                 <Text>{mintAmount}</Text>
 
                 <Incrementor
-                  onClick={(e) => {
+                  onClick={() => {
                     incrementMintAmount();
                   }}
                 >
@@ -96,22 +97,18 @@ const Mint = () => {
                 </Incrementor>
               </IncrementWrap>
               <MintBtn
-                onClick={() =>
-                  !walletAddress ? connectWallet() : mintNFT(mintAmount)
-                }
-                onMouseEnter={onHover}
-                onMouseLeave={onHover}
-                primary="true"
+                onClick={() => (!account ? connectWallet() : mintNFT(mintAmount))}
               >
-                {!walletAddress ? "Connect Wallet" : "Mint"}
+                {!account ? 'Connect Wallet' : 'Mint'}
               </MintBtn>
             </MintContent>
+            <Text>{globalError ? globalError.message : null}</Text>
           </MintWrap>
         </HeroContainer>
       </Container>
       <FooterContainer />
     </>
   );
-};
+}
 
 export default Mint;

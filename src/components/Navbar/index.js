@@ -1,6 +1,16 @@
-import { React, useEffect, useState, useContext } from "react";
-import { animateScroll as scroll } from "react-scroll";
-import { useLocation } from "react-router-dom";
+import {
+  React, useEffect, useState, useContext, useMemo,
+} from 'react';
+import { animateScroll as scroll } from 'react-scroll';
+import { useLocation } from 'react-router-dom';
+import { FaBars } from 'react-icons/fa';
+import { IconContext } from 'react-icons/lib';
+import { ethers } from 'ethers';
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import logo from '../../images/logo.svg';
+import { ConnectionContext } from '../../ConnectionContext';
 import {
   Nav,
   MobileIcon,
@@ -11,17 +21,16 @@ import {
   NavbarContainer,
   NavBtnConnect,
   NavLogo,
-} from "./NavbarElements";
-import { FaBars } from "react-icons/fa";
-import { IconContext } from "react-icons/lib";
-import logo from "../../images/logo.svg";
-import { ethers } from "ethers";
-import { ConnectionContext } from "../../ConnectionContext";
+} from './NavbarElements';
+import providerOptions from '../../providerOptions';
 
-const Navbar = ({ toggle }) => {
+function Navbar({ toggle }) {
+  const [provider, setProvider] = useState();
+  const [library, setLibrary] = useState();
+  const [error, setError] = useState('');
   const [scrollNav, setScrollNav] = useState(false);
   const { account, setAccount } = useContext(ConnectionContext);
-  let walletAddress = account;
+  const walletAddress = account;
 
   const changeNav = () => {
     if (window.scrollY >= 80) {
@@ -32,106 +41,110 @@ const Navbar = ({ toggle }) => {
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", changeNav);
+    window.addEventListener('scroll', changeNav);
   }, []);
 
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(
-        window.ethereum,
-        "any"
-      );
-
-      await provider.send("eth_requestAccounts", []);
-
-      const signer = provider.getSigner();
-
-      let address = await signer.getAddress();
-      console.log("Account: ", address);
-
-      setAccount(address);
+  async function connectWallet() {
+    const web3Modal = new Web3Modal({
+      network: 'rinkeby',
+      theme: 'light',
+      cacheProvider: true,
+      disableInjectedProvider: false,
+      providerOptions,
+    });
+    try {
+      const providerNew = await web3Modal.connect();
+      const libraryNew = new ethers.providers.Web3Provider(provider);
+      const accounts = await library.listAccounts();
+      setProvider(providerNew);
+      setLibrary(libraryNew);
+      if (accounts) setAccount(accounts[0]);
+    } catch (errorNew) {
+      setError(errorNew);
     }
-  };
+  }
 
   const toggleHome = () => {
     scroll.scrollToTop();
   };
 
+  const color = useMemo(() => ({ color: '#fff' }), []);
+
   return (
-    <>
-      <IconContext.Provider value={{ color: "#ff" }}>
-        <Nav scrollNav={scrollNav}>
-          <NavbarContainer>
-            <NavLogo to="/" onClick={toggleHome}>
-              <img src={logo} alt="Logo" height={"80px"} width={"80px"} />
-            </NavLogo>
-            <MobileIcon location={useLocation().pathname} onClick={toggle}>
-              <FaBars />
-            </MobileIcon>
-            <NavMenu>
-              <NavItem>
-                <NavLinks
-                  location={useLocation().pathname}
-                  to="about"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  About
-                </NavLinks>
-              </NavItem>
-              <NavItem>
-                <NavLinks
-                  location={useLocation().pathname}
-                  to="story"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  Story
-                </NavLinks>
-              </NavItem>
-              <NavItem>
-                <NavLinks
-                  location={useLocation().pathname}
-                  to="roadmap"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  Roadmap
-                </NavLinks>
-              </NavItem>
-              <NavItem>
-                <NavLinks
-                  location={useLocation().pathname}
-                  to="team"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  Team
-                </NavLinks>
-              </NavItem>
-              <NavBtn>
-                <NavBtnConnect onClick={connectWallet}>
-                  {!walletAddress ? "Connect Wallet" : walletAddress}
-                </NavBtnConnect>
-              </NavBtn>
-            </NavMenu>
-          </NavbarContainer>
-        </Nav>
-      </IconContext.Provider>
-    </>
+    <IconContext.Provider value={color}>
+      <Nav scrollNav={scrollNav}>
+        <NavbarContainer>
+          <NavLogo to="/" onClick={toggleHome}>
+            <img src={logo} alt="Logo" height="80px" width="80px" />
+          </NavLogo>
+          <MobileIcon location={useLocation().pathname} onClick={toggle}>
+            <FaBars />
+          </MobileIcon>
+          <NavMenu>
+            <NavItem>
+              <NavLinks
+                location={useLocation().pathname}
+                to="about"
+                smooth
+                duration={500}
+                spy
+                exact="true"
+                offset={-80}
+              >
+                About
+              </NavLinks>
+            </NavItem>
+            <NavItem>
+              <NavLinks
+                location={useLocation().pathname}
+                to="story"
+                smooth
+                duration={500}
+                spy
+                exact="true"
+                offset={-80}
+              >
+                Story
+              </NavLinks>
+            </NavItem>
+            <NavItem>
+              <NavLinks
+                location={useLocation().pathname}
+                to="roadmap"
+                smooth
+                duration={500}
+                spy
+                exact="true"
+                offset={-80}
+              >
+                Roadmap
+              </NavLinks>
+            </NavItem>
+            <NavItem>
+              <NavLinks
+                location={useLocation().pathname}
+                to="team"
+                smooth
+                duration={500}
+                spy
+                exact="true"
+                offset={-80}
+              >
+                Team
+              </NavLinks>
+            </NavItem>
+            <NavBtn>
+              <NavBtnConnect
+                onClick={() => (!walletAddress ? connectWallet() : null)}
+              >
+                {!walletAddress ? 'Connect Wallet' : walletAddress}
+              </NavBtnConnect>
+            </NavBtn>
+          </NavMenu>
+        </NavbarContainer>
+      </Nav>
+    </IconContext.Provider>
   );
-};
+}
 
 export default Navbar;

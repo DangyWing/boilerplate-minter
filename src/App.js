@@ -1,9 +1,9 @@
-import "./App.css";
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Home from "./pages";
-import Mint from "./pages/mint";
-import { ContextProvider } from "./ConnectionContext";
+import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Home from './pages';
+import Mint from './pages/mint';
+import { ContextProvider } from './ConnectionContext';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/" component={Home} exact />
-          <Route path="/mint" component={Mint} />
+          <Route path="/mint" component={Mint} />          
         </Switch>
       </Router>
     </ContextProvider>

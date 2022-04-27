@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const MintBg = styled.div`
   position: absolute;
@@ -19,9 +19,9 @@ export const HeroContainer = styled.div`
   padding: 0 30px;
   height: 800px;
   position: relative;
-  z-index: 1;
+  z-index: 0;
   :before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -32,7 +32,7 @@ export const HeroContainer = styled.div`
       rgba(0, 0, 0, 0.2) 0%,
       rgba(0, 0, 0, 0.6) 100%
     );
-    z-index: 2;
+    z-index: 0;
   }
 `;
 export const VideoBg = styled.video`
@@ -41,7 +41,7 @@ export const VideoBg = styled.video`
   -o-object-fit: cover;
   object-fit: cover;
   background: #232a34;
-  z-index: 1;
+  z-index: -10;
 `;
 
 export const FooterContainer = styled.footer`
@@ -50,14 +50,11 @@ export const FooterContainer = styled.footer`
 `;
 
 export const Container = styled.div`
-  //min-height: 692px;
-  //position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   top: 0;
-  z-index: 2;
-  //overflow: hidden;
+  z-index: 1;
   background-color: #0c0c0c;
   display: flex;
   flex-direction: column;
@@ -65,7 +62,7 @@ export const Container = styled.div`
 `;
 
 export const MintWrap = styled.div`
-  z-index: 2;
+  z-index: 0;
   height: 100%;
   width: auto;
   align-items: center;

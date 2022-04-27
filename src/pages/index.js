@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
-import HeroSection from "../components/HeroSection";
-import InfoSection from "../components/InfoSection";
+import React, { useState } from 'react';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
+import HeroSection from '../components/HeroSection';
+import InfoSection from '../components/InfoSection';
 import {
   homeObjOne,
   homeObjTwo,
   homeObjThree,
-} from "../components/InfoSection/Data";
-import Roadmap from "../components/Roadmap";
+} from '../components/InfoSection/Data';
+import Roadmap from '../components/Roadmap';
 
-const Home = () => {
+function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -29,6 +29,6 @@ const Home = () => {
       <Footer />
     </>
   );
-};
+}
 
 export default Home;

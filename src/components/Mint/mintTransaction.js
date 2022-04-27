@@ -1,27 +1,26 @@
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
+import abi from './abi.json';
 
 async function mintNFT(mintAmount) {
-  let abi = require("./abi.json");
+  const contractAddress = '0xFE98Bd9Bb6CaE3ba0386824a3493De466eFDB4Bf';
 
-  let contractAddress = "0xFE98Bd9Bb6CaE3ba0386824a3493De466eFDB4Bf";
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  let provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
 
-  let signer = provider.getSigner();
-
-  let contract = new ethers.Contract(contractAddress, abi, provider).connect(
-    signer
+  const contract = new ethers.Contract(contractAddress, abi, provider).connect(
+    signer,
   );
 
-  let ethAmount = ethers.utils.parseEther("0.05");
+  const ethAmount = ethers.utils.parseEther('0.05');
 
-  let gasEstimate = await contract.estimateGas.mintDick(mintAmount, {
+  const gasEstimate = await contract.estimateGas.mintDick(mintAmount, {
     value: ethAmount,
   });
 
-  console.log("Gas Estimate: " + gasEstimate);
+  console.log(`Gas Estimate: ${gasEstimate}`);
 
-  let tx = await contract.mintDick(mintAmount, {
+  const tx = await contract.mintDick(mintAmount, {
     value: ethAmount,
   });
 
