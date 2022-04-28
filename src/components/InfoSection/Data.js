@@ -38,14 +38,14 @@ export const homeObjTwo = {
   img: img2.default,
   alt: 'ETH Balloon',
   dark: false,
-  primary: false,
+  primary: true,
   darkText: true,
 };
 
 export const homeObjThree = {
   id: 'team',
-  lightBg: false,
-  lightText: true,
+  lightBg: true,
+  lightText: false,
   lightTextDesc: false,
   topLine: 'Your Team',
   headline: 'Is the BEST team',
@@ -59,5 +59,5 @@ export const homeObjThree = {
   alt: 'Paper',
   dark: true,
   primary: true,
-  darkText: false,
+  darkText: true,
 };

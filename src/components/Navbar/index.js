@@ -1,16 +1,14 @@
-import {
-  React, useEffect, useState, useContext, useMemo,
-} from 'react';
+import { React, useEffect, useState, useContext, useMemo } from 'react';
+import { ethers } from 'ethers';
+import Web3Modal from 'web3modal';
 import { animateScroll as scroll } from 'react-scroll';
 import { useLocation } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { IconContext } from 'react-icons/lib';
-import { ethers } from 'ethers';
-import Web3Modal from 'web3modal';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+
 import logo from '../../images/logo.svg';
 import { ConnectionContext } from '../../ConnectionContext';
+import providerOptions from '../../providerOptions';
 import {
   Nav,
   MobileIcon,
@@ -22,15 +20,35 @@ import {
   NavBtnConnect,
   NavLogo,
 } from './NavbarElements';
-import providerOptions from '../../providerOptions';
+
+import { truncateAddress, toHex } from '../../utils';
+
+const web3Modal = new Web3Modal({
+  network: 'rinkeby',
+  theme: 'light',
+  cacheProvider: true,
+  disableInjectedProvider: false,
+  providerOptions,
+});
 
 function Navbar({ toggle }) {
-  const [provider, setProvider] = useState();
-  const [library, setLibrary] = useState();
-  const [error, setError] = useState('');
+  const refreshState = () => {
+    setAccount();
+    setChainId(null);
+  };
+
   const [scrollNav, setScrollNav] = useState(false);
   const { account, setAccount } = useContext(ConnectionContext);
-  const walletAddress = account;
+  const [provider, setProvider] = useState();
+  const [chainId, setChainId] = useState();
+  const [library, setLibrary] = useState();
+  const [globalError, setGlobalError] = useState('');
+
+  useEffect(() => {
+    if (chainId != 4) {
+      switchNetwork();
+    }
+  }, [library]);
 
   const changeNav = () => {
     if (window.scrollY >= 80) {
@@ -45,30 +63,47 @@ function Navbar({ toggle }) {
   }, []);
 
   async function connectWallet() {
-    const web3Modal = new Web3Modal({
-      network: 'rinkeby',
-      theme: 'light',
-      cacheProvider: true,
-      disableInjectedProvider: false,
-      providerOptions,
-    });
     try {
-      const providerNew = await web3Modal.connect();
-      const libraryNew = new ethers.providers.Web3Provider(provider);
+      const provider = await web3Modal.connect();
+      const library = new ethers.providers.Web3Provider(provider);
       const accounts = await library.listAccounts();
-      setProvider(providerNew);
-      setLibrary(libraryNew);
+      const network = await library.getNetwork();
+
+      setProvider(provider);
+      setLibrary(library);
+      setChainId(network.chainId);
+
       if (accounts) setAccount(accounts[0]);
-    } catch (errorNew) {
-      setError(errorNew);
+    } catch (error) {
+      setGlobalError(error);
     }
   }
+
+  const switchNetwork = async () => {
+    if (library) {
+      try {
+        await library.provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: toHex(4) }],
+        });
+        console.log('SWITCHING');
+      } catch (error) {
+        setGlobalError(error);
+        setAccount();
+      }
+    }
+  };
 
   const toggleHome = () => {
     scroll.scrollToTop();
   };
 
   const color = useMemo(() => ({ color: '#fff' }), []);
+
+  const disconnect = async () => {
+    await web3Modal.clearCachedProvider();
+    refreshState();
+  };
 
   return (
     <IconContext.Provider value={color}>
@@ -135,9 +170,10 @@ function Navbar({ toggle }) {
             </NavItem>
             <NavBtn>
               <NavBtnConnect
-                onClick={() => (!walletAddress ? connectWallet() : null)}
+                onClick={() => (!account ? connectWallet() : disconnect())}
+                // onClick={() => (!account ? connectWallet() : null)}
               >
-                {!walletAddress ? 'Connect Wallet' : walletAddress}
+                {!account ? 'Connect Wallet' : truncateAddress(account)}
               </NavBtnConnect>
             </NavBtn>
           </NavMenu>

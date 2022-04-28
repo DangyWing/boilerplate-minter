@@ -41,12 +41,13 @@ export const VideoBg = styled.video`
   -o-object-fit: cover;
   object-fit: cover;
   background: #232a34;
-  z-index: -10;
+  z-index: -2;
 `;
 
 export const FooterContainer = styled.footer`
   background-color: #0c0c0c;
   height: 100vh;
+  z-index: -3;
 `;
 
 export const Container = styled.div`
@@ -102,9 +103,6 @@ export const Text = styled.span`
   color: #d3d3d3;
   font-size: 18px;
   padding: 10px 10px;
-  max-width: 420px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const MintBtn = styled.button`

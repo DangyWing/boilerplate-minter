@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   HeroBg,
   HeroContainer,
@@ -8,12 +8,12 @@ import {
   HeroP,
   HeroBtnWrapper,
   HeroRoute,
-} from "./HeroElements";
-import Video from "../../videos/video.mp4";
+} from './HeroElements';
+import Video from '../../videos/video.mp4';
 
 const HeroSection = () => {
   return (
-    <HeroContainer>
+    <HeroContainer id="hero">
       <HeroBg>
         <VideoBg autoPlay loop muted src={Video} type="video/mp4" />
       </HeroBg>
@@ -25,7 +25,7 @@ const HeroSection = () => {
           minim veniam
         </HeroP>
         <HeroBtnWrapper>
-          <HeroRoute to="/mint">Mint</HeroRoute>
+          <HeroRoute to="/mint">Mint Page</HeroRoute>
         </HeroBtnWrapper>
       </HeroContent>
     </HeroContainer>

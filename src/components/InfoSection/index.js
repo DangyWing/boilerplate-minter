@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "../ButtonElements";
+import { animateScroll as scroll } from "react-scroll";
 import {
   ImgWrap,
   InfoContainer,
@@ -28,8 +29,7 @@ const InfoSection = ({
   img,
   alt,
   primary,
-  dark,
-  dark2,
+  dark  
 }) => {
   return (
     <>
@@ -43,15 +43,14 @@ const InfoSection = ({
                 <Subtitle darkText={darkText}>{description}</Subtitle>
                 <BtnWrap>
                   <Button
-                    to="home"
+                    to="hero"                     
                     smooth={true}
                     duration={500}
                     spy={true}
                     exact="true"
                     offset={-80}
                     primary={primary ? 1 : 0}
-                    dark={dark ? 1 : 0}
-                    dark2={dark2 ? 1 : 0}
+                    dark={dark ? 1 : 0}                    
                   >
                     {buttonLabel}
                   </Button>

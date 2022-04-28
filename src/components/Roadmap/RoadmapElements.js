@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const RoadmapContainer = styled.div`
   height: 800px;
@@ -48,7 +48,7 @@ export const RoadmapCard = styled.div`
   &:hover {
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
-    cursor: pointer;
+    cursor: default;
   }
 `;
 
